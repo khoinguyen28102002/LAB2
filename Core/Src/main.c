@@ -56,6 +56,7 @@ static void MX_TIM2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+  int hour = 11, minute = 58, second = 55;
   void display7SEG(int num);
   const int MAX_LED = 4;
   int index_led = 0;
@@ -89,6 +90,12 @@ static void MX_TIM2_Init(void);
   	  default :
   		  break ;
   	  }
+  }
+  void updateClockBuffer(){
+  	led_buffer[0] = (int) hour/10;
+  	led_buffer[1] = hour%10;
+  	led_buffer[2] = (int) minute/10;
+  	led_buffer[3] = minute%10;
   }
 /* USER CODE END 0 */
 
@@ -129,9 +136,21 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
+      /* USER CODE END WHILE */
+  	  second++;
+  	  if(second >= 60){
+  		  second = 0;
+  		  minute++;
+  	  }
+  	  if(minute >= 60){
+  		  minute = 0;
+  		  hour++;
+  	  }
+  	  if(hour >= 24)
+  		  hour = 0;
+  	  updateClockBuffer();
+  	  HAL_Delay(1000);
+      /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
 }
