@@ -19,7 +19,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
+#include "software_timer.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -56,7 +56,7 @@ static void MX_TIM2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-  int hour = 11, minute = 58, second = 55;
+  int hour = 23, minute = 58, second = 55;
   void display7SEG(int num);
   const int MAX_LED = 4;
   int index_led = 0;
@@ -134,23 +134,28 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  setTimer1(10);
   while (1)
   {
-      /* USER CODE END WHILE */
-  	  second++;
-  	  if(second >= 60){
-  		  second = 0;
-  		  minute++;
-  	  }
-  	  if(minute >= 60){
-  		  minute = 0;
-  		  hour++;
-  	  }
-  	  if(hour >= 24)
-  		  hour = 0;
-  	  updateClockBuffer();
-  	  HAL_Delay(1000);
-      /* USER CODE BEGIN 3 */
+    /* USER CODE END WHILE */
+  	if(timer1_flag == 1){
+  		second++;
+  		if(second >= 60){
+  			second = 0;
+  			minute++;
+  		}
+  		if(minute >= 60){
+  			minute = 0;
+  			hour++;
+  		}
+  		if(hour >= 24){
+  			hour = 0;
+  		}
+  		updateClockBuffer();
+  		HAL_GPIO_TogglePin(GPIOA, DOT_Pin|LED_RED_Pin);
+  		setTimer1(1000);
+  	}
+    /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
 }
@@ -277,20 +282,16 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-int counter = 0;
-int count = 100;
+int counter = 25;
 void HAL_TIM_PeriodElapsedCallback ( TIM_HandleTypeDef * htim )
 {
-	counter --; count--;
-		if(counter <= 0){
-			update7SEG(index_led++);
-			if(index_led > 3) index_led = 0;
-			counter = 25;
-		}
-		if( count <= 0){
-			count = 100;
-			HAL_GPIO_TogglePin(GPIOA, DOT_Pin|LED_RED_Pin);
-		}
+	counter--;
+	if(counter <= 0){
+		update7SEG(index_led++);
+		if(index_led > 3) index_led = 0;
+		counter = 25;
+	}
+	timerRun();
 
 }
 void display7SEG(int num){
