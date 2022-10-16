@@ -285,14 +285,13 @@ static void MX_GPIO_Init(void)
 int counter = 25;
 void HAL_TIM_PeriodElapsedCallback ( TIM_HandleTypeDef * htim )
 {
+	timerRun();
 	counter--;
 	if(counter <= 0){
 		update7SEG(index_led++);
 		if(index_led > 3) index_led = 0;
 		counter = 25;
 	}
-	timerRun();
-
 }
 void display7SEG(int num){
 	if(num == 0){
