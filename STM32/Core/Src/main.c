@@ -134,26 +134,33 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  setTimer1(10);
+  setTimer1(0);
+  int count = 0;
   while (1)
   {
     /* USER CODE END WHILE */
   	if(timer1_flag == 1){
-  		second++;
-  		if(second >= 60){
-  			second = 0;
-  			minute++;
+  		count--;
+  		if(count <= 0){
+  	  		second++;
+  	  		if(second >= 60){
+  	  			second = 0;
+  	  			minute++;
+  	  		}
+  	  		if(minute >= 60){
+  	  			minute = 0;
+  	  			hour++;
+  	  		}
+  	  		if(hour >= 24){
+  	  			hour = 0;
+  	  		}
+  	  		updateClockBuffer();
+  			HAL_GPIO_TogglePin(GPIOA, DOT_Pin|LED_RED_Pin);
+  			count = 4;
   		}
-  		if(minute >= 60){
-  			minute = 0;
-  			hour++;
-  		}
-  		if(hour >= 24){
-  			hour = 0;
-  		}
-  		updateClockBuffer();
-  		HAL_GPIO_TogglePin(GPIOA, DOT_Pin|LED_RED_Pin);
-  		setTimer1(1000);
+		update7SEG(index_led++);
+		if(index_led > 3) index_led = 0;
+  		setTimer1(250);
   	}
     /* USER CODE BEGIN 3 */
   }
@@ -286,12 +293,6 @@ int counter = 25;
 void HAL_TIM_PeriodElapsedCallback ( TIM_HandleTypeDef * htim )
 {
 	timerRun();
-	counter--;
-	if(counter <= 0){
-		update7SEG(index_led++);
-		if(index_led > 3) index_led = 0;
-		counter = 25;
-	}
 }
 void display7SEG(int num){
 	if(num == 0){
