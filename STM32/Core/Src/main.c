@@ -193,6 +193,7 @@ int main(void)
 	if(timer1_flag == 1){
 		updateLEDMatrix(index_led_matrix++);
 		if(index_led_matrix > 7){
+			updateLEDMatrixBuffer();
 			index_led_matrix = 0;
 		}
 		setTimer1(10);
